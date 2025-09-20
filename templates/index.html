@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MercSentAI Enhanced MVP Demo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .form-section, .results-section, .dashboard-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .result-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .merchant-info {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .fraud-analysis {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .risk-scores {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .risk-score {
+            text-align: center;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .risk-low { background: #d4edda; color: #155724; }
+        .risk-medium { background: #fff3cd; color: #856404; }
+        .risk-high { background: #f8d7da; color: #721c24; }
+        .decision {
+            text-align: center;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .flag-category {
+            margin-bottom: 10px;
+        }
+        .flag-category h5 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+        .flag {
+            display: inline-block;
+            background: #dc3545;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin: 2px;
+        }
+        .processing-time {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .sample-data {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .sample-button {
+            background: #6c757d;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin: 5px;
+            width: auto;
+        }
+        .dashboard-card {
+            text-align: center;
+        }
+        .dashboard-number {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .dashboard-label {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+        }
+        .recommendations {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        .recommendations ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🛡️ MercSentAI Enhanced MVP Demo</h1>
+        <p>Unified Fraud Detection & Merchant Intelligence Platform</p>
+        <p>Transform cryptic transaction data into intelligent fraud decisions</p>
+    </div>
+
+    <div class="main-container">
+        <div class="form-section">
+            <h2>📊 Transaction Analysis</h2>
+            <form id="transactionForm">
+                <div class="form-group">
+                    <label for="merchant_id">Merchant ID:</label>
+                    <select id="merchant_id" name="merchant_id" required>
+                        <option value="">Select a merchant...</option>
+                        <option value="MCC_5411_12345">MCC_5411_12345 (Grocery Store)</option>
+                        <option value="MCC_5812_67890">MCC_5812_67890 (Fast Food)</option>
+                        <option value="MCC_5999_11111">MCC_5999_11111 (Electronics - HIGH RISK)</option>
+                        <option value="MCC_4121_22222">MCC_4121_22222 (Transportation)</option>
+                        <option value="MCC_7995_33333">MCC_7995_33333 (Gambling - HIGH RISK)</option>
+                        <option value="MCC_5533_44444">MCC_5533_44444 (Auto Parts)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="amount">Transaction Amount ($):</label>
+                    <input type="number" id="amount" name="amount" value="150" min="0" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="card_number">Card Number (last 4 digits):</label>
+                    <input type="text" id="card_number" name="card_number" value="1234" maxlength="4" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="ip_location">IP Location:</label>
+                    <input type="text" id="ip_location" name="ip_location" value="New York, NY" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="billing_location">Billing Location:</label>
+                    <input type="text" id="billing_location" name="billing_location" value="New York, NY" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="velocity">Transactions per hour:</label>
+                    <input type="number" id="velocity" name="velocity" value="3" min="0" required>
+                </div>
+                
+                <button type="submit">🔍 Analyze Transaction</button>
+            </form>
+            
+            <div class="sample-data">
+                <h3>🎯 Fraud Scenarios:</h3>
+                <button class="sample-button" onclick="loadSample('clean_transaction')">Clean Transaction</button>
+                <button class="sample-button" onclick="loadSample('velocity_fraud')">Velocity Fraud</button>
+                <button class="sample-button" onclick="loadSample('location_fraud')">Location Fraud</button>
+                <button class="sample-button" onclick="loadSample('merchant_fraud')">Merchant Fraud</button>
+                <button class="sample-button" onclick="loadSample('extreme_fraud')">Extreme Fraud</button>
+            </div>
+        </div>
+
+        <div class="results-section">
+            <h2>📈 Analysis Results</h2>
+            <div id="results">
+                <p style="text-align: center; color: #666; margin-top: 50px;">
+                    Submit a transaction to see the detailed fraud analysis
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-container" id="dashboard" style="display: none;">
+        <div class="dashboard-card">
+            <div class="dashboard-label">Transaction Risk Score</div>
+            <div class="dashboard-number" id="transaction-risk-score">--</div>
+            <div class="dashboard-label">Based on transaction patterns</div>
+        </div>
+        <div class="dashboard-card">
+            <div class="dashboard-label">Merchant Risk Score</div>
+            <div class="dashboard-number" id="merchant-risk-score">--</div>
+            <div class="dashboard-label">Based on merchant profile</div>
+        </div>
+        <div class="dashboard-card">
+            <div class="dashboard-label">Combined Risk Score</div>
+            <div class="dashboard-number" id="combined-risk-score">--</div>
+            <div class="dashboard-label">Final decision score</div>
+        </div>
+    </div>
+
+    <script>
+        const sampleData = {
+            clean_transaction: {
+                merchant_id: 'MCC_5411_12345',
+                amount: 45.99,
+                card_number: '1234',
+                ip_location: 'New York, NY',
+                billing_location: 'New York, NY',
+                velocity: 2
+            },
+            velocity_fraud: {
+                merchant_id: 'MCC_5812_67890',
+                amount: 25.50,
+                card_number: '5678',
+                ip_location: 'Los Angeles, CA',
+                billing_location: 'Los Angeles, CA',
+                velocity: 18
+            },
+            location_fraud: {
+                merchant_id: 'MCC_4121_22222',
+                amount: 35.00,
+                card_number: '7890',
+                ip_location: 'High Risk City, TX',
+                billing_location: 'New York, NY',
+                velocity: 3
+            },
+            merchant_fraud: {
+                merchant_id: 'MCC_5999_11111',
+                amount: 1500,
+                card_number: '9999',
+                ip_location: 'High Risk City, TX',
+                billing_location: 'High Risk City, TX',
+                velocity: 5
+            },
+            extreme_fraud: {
+                merchant_id: 'MCC_7995_33333',
+                amount: 5000,
+                card_number: '0000',
+                ip_location: 'High Risk City, TX',
+                billing_location: 'New York, NY',
+                velocity: 25
+            }
+        };
+
+        function loadSample(type) {
+            const data = sampleData[type];
+            document.getElementById('merchant_id').value = data.merchant_id;
+            document.getElementById('amount').value = data.amount;
+            document.getElementById('card_number').value = data.card_number;
+            document.getElementById('ip_location').value = data.ip_location;
+            document.getElementById('billing_location').value = data.billing_location;
+            document.getElementById('velocity').value = data.velocity;
+        }
+
+        document.getElementById('transactionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            data.amount = parseFloat(data.amount);
+            data.velocity = parseInt(data.velocity);
+            data.card_valid = !['9999', '0000'].includes(data.card_number);
+            
+            try {
+                const response = await fetch('/analyze-transaction', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                displayResults(result);
+                updateDashboard(result);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('results').innerHTML = '<p style="color: red;">Error analyzing transaction</p>';
+            }
+        });
+
+        function displayResults(result) {
+            const riskClass = result.fraud_analysis.combined_risk_score <= 25 ? 'risk-low' : 
+                            result.fraud_analysis.combined_risk_score <= 50 ? 'risk-medium' : 'risk-high';
+            
+            const decisionClass = result.decision.toLowerCase();
+            
+            // Generate categorized flags HTML
+            let categorizedFlagsHtml = '';
+            for (const [category, flags] of Object.entries(result.fraud_analysis.categorized_flags)) {
+                if (flags.length > 0) {
+                    categorizedFlagsHtml += `
+                        <div class="flag-category">
+                            <h5>${category}:</h5>
+                            ${flags.map(flag => `<span class="flag">${flag.replace(/_/g, ' ')}</span>`).join('')}
+                        </div>
+                    `;
+                }
+            }
+            
+            if (!categorizedFlagsHtml) {
+                categorizedFlagsHtml = '<span style="color: green; font-weight: bold;">✅ No fraud flags detected</span>';
+            }
+            
+            const recommendationsHtml = result.recommendations.map(rec => `<li>${rec}</li>`).join('');
+            
+            document.getElementById('results').innerHTML = `
+                <div class="result-card">
+                    <h3>📄 Transaction ID: ${result.transaction_id}</h3>
+                    
+                    <div class="merchant-info">
+                        <h4>🏪 Merchant Intelligence</h4>
+                        <p><strong>Name:</strong> ${result.merchant_info.name}</p>
+                        <p><strong>Category:</strong> ${result.merchant_info.category}</p>
+                        <p><strong>Location:</strong> ${result.merchant_info.location}</p>
+                        <p><strong>Business Age:</strong> ${result.merchant_info.business_age_months} months</p>
+                        <p><strong>Chargeback Rate:</strong> ${result.merchant_info.chargeback_rate}%</p>
+                        <p><strong>Verification:</strong> ${result.merchant_info.verification_status}</p>
+                        <p><strong>MCC Code:</strong> ${result.merchant_info.mcc_code}</p>
+                    </div>
+                    
+                    <div class="fraud-analysis">
+                        <h4>🚨 Fraud Analysis</h4>
+                        ${categorizedFlagsHtml}
+                    </div>
+                    
+                    <div class="risk-scores">
+                        <div class="risk-score ${result.fraud_analysis.transaction_risk_score <= 25 ? 'risk-low' : result.fraud_analysis.transaction_risk_score <= 50 ? 'risk-medium' : 'risk-high'}">
+                            Transaction Risk<br>${result.fraud_analysis.transaction_risk_score}/100
+                        </div>
+                        <div class="risk-score ${result.fraud_analysis.merchant_risk_score <= 25 ? 'risk-low' : result.fraud_analysis.merchant_risk_score <= 50 ? 'risk-medium' : 'risk-high'}">
+                            Merchant Risk<br>${result.fraud_analysis.merchant_risk_score}/100
+                        </div>
+                        <div class="risk-score ${riskClass}">
+                            Combined Risk<br>${result.fraud_analysis.combined_risk_score}/100
+                        </div>
+                    </div>
+                    
+                    <div class="decision decision-${decisionClass}" style="background-color: ${result.decision_color}; color: white;">
+                        Decision: ${result.decision}
+                    </div>
+                    
+                    <div class="recommendations">
+                        <h4>💡 Recommendations</h4>
+                        <ul>${recommendationsHtml}</ul>
+                    </div>
+                    
+                    <div class="processing-time">
+                        ⚡ Processing Time: ${result.processing_time} | 🕒 ${new Date(result.timestamp).toLocaleTimeString()}
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateDashboard(result) {
+            document.getElementById('dashboard').style.display = 'grid';
+            
+            // Update dashboard numbers
+            document.getElementById('transaction-risk-score').textContent = result.fraud_analysis.transaction_risk_score;
+            document.getElementById('merchant-risk-score').textContent = result.fraud_analysis.merchant_risk_score;
+            document.getElementById('combined-risk-score').textContent = result.fraud_analysis.combined_risk_score;
+            
+            // Color code dashboard based on risk levels
+            const transactionCard = document.getElementById('transaction-risk-score').parentElement;
+            const merchantCard = document.getElementById('merchant-risk-score').parentElement;
+            const combinedCard = document.getElementById('combined-risk-score').parentElement;
+            
+            // Remove existing risk classes
+            [transactionCard, merchantCard, combinedCard].forEach(card => {
+                card.classList.remove('risk-low', 'risk-medium', 'risk-high');
+            });
+            
+            // Add appropriate risk classes
+            const getRiskClass = (score) => score <= 25 ? 'risk-low' : score <= 50 ? 'risk-medium' : 'risk-high';
+            
+            transactionCard.classList.add(getRiskClass(result.fraud_analysis.transaction_risk_score));
+            merchantCard.classList.add(getRiskClass(result.fraud_analysis.merchant_risk_score));
+            combinedCard.classList.add(getRiskClass(result.fraud_analysis.combined_risk_score));
+        }
+    </script>
+</body>
+</html>
